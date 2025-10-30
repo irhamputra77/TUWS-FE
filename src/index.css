@@ -1,1 +1,20 @@
 @import "tailwindcss";
+
+/* HIDE SCROLLBAR (semua browser) */
+@layer utilities {
+
+    /* Chrome, Safari, Opera */
+    .no-scrollbar::-webkit-scrollbar {
+        display: none;
+    }
+
+    /* Firefox */
+    .no-scrollbar {
+        scrollbar-width: none;
+    }
+
+    /* Edge/IE */
+    .no-scrollbar {
+        -ms-overflow-style: none;
+    }
+}
