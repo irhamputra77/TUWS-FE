@@ -1,66 +1,123 @@
-/**
- * SimpleLineChart (organism)
- * Props sama: { data, param, className }
- */
-export default function SimpleLineChart({ data, param = "temp", className }) {
-    const W = 860, H = 360, padX = 48, padY = 28;
+// components/organisms/dashboard/SimpleLineChart.jsx
+import { Bold } from "lucide-react";
+import { useId, useMemo } from "react";
+import {
+    ResponsiveContainer, LineChart, Line,
+    XAxis, YAxis, CartesianGrid, Tooltip,
+} from "recharts";
 
-    const UNIT = {
-        temp: "°C", pressure: "hPa", humidity: "%", wind: "m/s", uv: "", rain: "mm", radiation: "W/m²",
-    }[param] ?? "";
-
-    const FIXED_DOMAIN = { humidity: [0, 100], uv: [0, 10] }[param] ?? null;
-
+export default function SimpleLineChart({
+    data = [],
+    param = "temp",
+    className = "",
+    height = 320,
+    title,
+    strokeOpacity = 0.7,    // 0..1
+    gridOpacity = 0.12,     // 0..1
+}) {
     if (!data?.length) {
-        return <div className={className}><div className="text-white/80 text-sm">Tidak ada data</div></div>;
+        return <div className={className}><div className="text-white/70 text-sm">Tidak ada data</div></div>;
     }
 
-    const xs = data.map((_, i) => padX + (i * (W - 2 * padX)) / Math.max(1, data.length - 1));
-    const vals = data.map(d => +d.value);
+    const UNIT = { temp: "°C", pressure: "hPa", humidity: "%", wind: "m/s", uv: "", rain: "mm", radiation: "W/m²" }[param] ?? "";
+    const domain = param === "humidity" ? [0, 100] : param === "uv" ? [0, 10] : ["dataMin - 1", "dataMax + 1"];
 
-    let minY = FIXED_DOMAIN ? FIXED_DOMAIN[0] : Math.min(...vals);
-    let maxY = FIXED_DOMAIN ? FIXED_DOMAIN[1] : Math.max(...vals);
-    if (!(maxY > minY)) {
-        const pad = Math.abs(maxY || 1) * 0.1 + 1;
-        minY = (minY ?? 0) - pad; maxY = (maxY ?? 0) + pad;
-    }
+    const uid = useId();
+    const strokeId = `tstroke-${uid}`;
+    const glowId = `tglow-${uid}`;
 
-    const y = (v) => (H - padY) - ((v - minY) / (maxY - minY)) * (H - 2 * padY);
-    const path = xs.map((x, i) => `${i ? "L" : "M"} ${x} ${y(vals[i])}`).join(" ");
+    const t = useMemo(() => ({
+        lineA: Math.min(1, Math.max(0, strokeOpacity)),         // white → semi
+        lineB: Math.min(1, Math.max(0, strokeOpacity * 0.6)),
+        grid: Math.min(1, Math.max(1, gridOpacity)),
+        axis: 0.9,
+        tick: 0.88,
+        glow: 1.1,
+    }), [strokeOpacity, gridOpacity]);
 
-    const TICKS = 5;
-    const ticks = Array.from({ length: TICKS }, (_, i) => minY + (i * (maxY - minY)) / (TICKS - 1));
-    const fmt = (n) => {
-        const v = Math.abs(maxY - minY) < 5 ? n.toFixed(1) : Math.round(n).toString();
-        return v.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    const tooltipStyle = {
+        background: "transparent",
+        border: "1px solid rgba(255,255,255,0.18)",
+        borderRadius: 10,
+        color: "#fff",
+        backdropFilter: "blur(6px)",       // masih halus, boleh hapus jika ingin 100% transparan
+        WebkitBackdropFilter: "blur(6px)",
+    };
+
+    const CustomTooltip = ({ active, payload, label }) => {
+        if (!active || !payload?.length) return null;
+        const v = payload[0].value;
+        return (
+            <div style={tooltipStyle}>
+                <div style={{ padding: "6px 10px", fontSize: 12 }}>
+                    <div style={{ opacity: 0.9, fontWeight: 600 }}>{label}</div>
+                    <div style={{ opacity: 0.95 }}>{v}{UNIT && ` ${UNIT}`}</div>
+                </div>
+            </div >
+        );
     };
 
     return (
         <div className={className}>
-            <svg viewBox={`0 0 ${W} ${H}`} className="w-full h-auto">
-                {ticks.map((t, i) => {
-                    const gy = y(t);
-                    return (
-                        <g key={i}>
-                            <line x1={padX} x2={W - padX} y1={gy} y2={gy} className="stroke-white/25" strokeWidth="1" />
-                            <text x={padX - 10} y={gy + 4} textAnchor="end" className="fill-white/90 text-[11px]">
-                                {fmt(t)}{UNIT ? ` ${UNIT}` : ""}
-                            </text>
-                        </g>
-                    );
-                })}
-                <line x1={padX} x2={padX} y1={padY} y2={H - padY} className="stroke-white/60" strokeWidth="1.5" />
-                <path d={path} className="fill-none stroke-white" strokeWidth="3" />
-                {xs.map((x, i) => (
-                    <g key={i}>
-                        <circle cx={x} cy={y(vals[i])} r="4" className="fill-white" />
-                        <text x={x} y={H - 6} textAnchor="middle" className="fill-white opacity-90 text-[12px]">
-                            {data[i].label}
-                        </text>
-                    </g>
-                ))}
-                {UNIT && <text x={padX} y={padY - 8} className="fill-white/80 text-[12px]">Y: {UNIT}</text>}
-            </svg>
+            {title ? <div className="mb-1 text-white/85 text-sm font-semibold">{title}</div> : null}
+
+            {/* tidak ada wrapper bg/border: benar2 transparan */}
+            <ResponsiveContainer width="100%" height={height}>
+                <LineChart data={data} margin={{ top: 4, right: 4, bottom: 4, left: 4 }}>
+                    <defs>
+                        {/* stroke gradient putih transparan */}
+                        <linearGradient id={strokeId} x1="0" y1="0" x2="1" y2="0">
+                            <stop offset="0%" stopColor={`rgba(255,255,255,${t.lineA})`} />
+                            <stop offset="100%" stopColor={`rgba(255,255,255,${t.lineB})`} />
+                        </linearGradient>
+                        {/* glow tipis pada garis */}
+                        <filter id={glowId} x="-40%" y="-40%" width="180%" height="180%">
+                            <feGaussianBlur stdDeviation={t.glow} result="blur" />
+                            <feMerge>
+                                <feMergeNode in="blur" />
+                                <feMergeNode in="SourceGraphic" />
+                            </feMerge>
+                        </filter>
+                    </defs>
+
+                    <CartesianGrid stroke={`rgba(255,255,255,${t.grid})`} strokeDasharray="2 10" />
+
+                    <XAxis
+                        dataKey="label"
+                        tick={{ fill: `rgba(255,255,255,${t.tick})`, fontSize: 12 }}
+                        axisLine={{ stroke: `rgba(255,255,255,${t.axis})` }}
+                        tickLine={{ stroke: `rgba(255,255,255,${t.axis})` }}
+                        minTickGap={18}
+                        className="font-bold"
+                    />
+                    <YAxis
+                        domain={domain}
+                        tick={{ fill: `rgba(255,255,255,${t.tick})`, fontSize: 12 }}
+                        axisLine={{ stroke: `rgba(255,255,255,${t.axis})` }}
+                        tickLine={{ stroke: `rgba(255,255,255,${t.axis})` }}
+                        tickFormatter={(v) => (UNIT ? `${v} ${UNIT}` : `${v}`)}
+                        className="font-bold"
+                    />
+
+                    <Tooltip content={<CustomTooltip />} cursor={{ stroke: "rgba(255,255,255,0.18)" }} />
+
+                    <Line
+                        type="monotone"
+                        dataKey="value"
+                        stroke={`url(#${strokeId})`}
+                        strokeWidth={2.2}
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        dot={false}
+                        activeDot={{ r: 4, fill: "rgba(255,255,255,0.9)" }}
+                        isAnimationActive
+                        animationDuration={700}
+                        animationEasing="ease-out"
+                        filter={`url(#${glowId})`}
+                    // TANPA AREA: transparan total
+                    />
+                </LineChart>
+            </ResponsiveContainer>
         </div>
     );
 }

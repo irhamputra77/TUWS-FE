@@ -20,18 +20,17 @@ export default function SSeamlessBackgroundVideo({
         const el = v.current;
         if (!el) return;
 
-        const url = src?.startsWith("/public/") ? src.replace("/public", "") : src;
 
         const play = () => {
             try {
                 el.playbackRate = playbackRate || 1;
                 const p = el.play();
                 if (p?.catch) p.catch(() => { });
-            } catch { }
+            } catch { console.log("video not found!!") }
         };
 
         const prime = () => {
-            try { el.currentTime = startAt || 0; } catch { }
+            try { el.currentTime = startAt || 0; } catch { console.log("cannot start") }
             play();
         };
 

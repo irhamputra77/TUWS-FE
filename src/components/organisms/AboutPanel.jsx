@@ -1,9 +1,9 @@
-import Panel from "../atoms/Panel";
-import { H3 } from "../atoms/Heading";
+import Panel from "../atoms/panel";
+import H3 from "../atoms/Heading";
 import SocialLink from "../molecules/SocialLink";
 import { Instagram, Phone, Linkedin } from "lucide-react";
 
-const aboutText = "text-slate-700 text-[15px] sm:text-base leading-7 tracking-[0.0125em] max-w-[780px]";
+const aboutText = "text-slate-700 text-[15px] sm:text-base leading-7 tracking-[0.0125em] max-w-[780px] min-h-[340px]";
 
 export default function AboutPanel({ section, setSection }) {
     const tabs = [
@@ -60,13 +60,6 @@ export default function AboutPanel({ section, setSection }) {
                     {section === "team" && (
                         <Panel variant="solid">
                             <H3 className="mb-4">Anggota Tim</H3>
-
-                            {/* Data tim: silakan ubah fakultas & NIM sesuai kebutuhan */}
-                            {/*
-                            Contoh:
-                            - Fakultas bisa "Fakultas Informatika", "Fakultas Ilmu Terapan", dll.
-                            - NIM gunakan string agar nol di depan (jika ada) tidak hilang.
-                            */}
                             {(() => {
                                 const team = [
                                     { name: "Muhammad Abyan Wibowo", fakultas: "D4 Teknologi Rekayasa Multimedia", nim: "1301201234" },
@@ -75,7 +68,7 @@ export default function AboutPanel({ section, setSection }) {
                                 ];
 
                                 return (
-                                    <div className="grid grid-cols-1 sm:grid-cols-1 gap-3 max-w-[780px]">
+                                    <div className="grid grid-cols-1 sm:grid-cols-1 gap-3 max-w-[780px] min-h-[340px]">
                                         {team.map((m, i) => (
                                             <div
                                                 key={m.nim || i}
@@ -117,7 +110,7 @@ export default function AboutPanel({ section, setSection }) {
                     {section === "contact" && (
                         <Panel variant="solid">
                             <H3 className="mb-6 text-center">Hubungi Kami</H3>
-                            <div className="grid sm:grid-cols-2 gap-4 max-w-2xl">
+                            <div className="grid sm:grid-cols-2 gap-3 max-w-2xl min-h-[340px]">
                                 <SocialLink
                                     icon={Instagram}
                                     title="Instagram"

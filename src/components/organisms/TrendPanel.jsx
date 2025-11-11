@@ -1,7 +1,6 @@
 import Panel from "../atoms/Panel";
-import { H3 } from "../atoms/Heading";
-import { ParamPicker, RightSummary, LineChart } from "../../components/weather/detail";
-
+import { ParamPicker, RightSummary } from "../weather/detail";
+import SimpleLineChart from "./SimpleLineChart";
 export default function TrendPanel({ range, setRange, trendData, param, setParam, stats }) {
     return (
         <div className="grid lg:grid-cols-12 gap-6">
@@ -19,8 +18,8 @@ export default function TrendPanel({ range, setRange, trendData, param, setParam
                         <span className="pointer-events-none absolute right-2 top-1.5 text-slate-600">▾</span>
                     </div>
                 </div>
-                <LineChart data={trendData} param={param} showYAxis yTickCount={6}
-                    yLines={[{ value: parseFloat(stats.avg), label: "Rata-rata" }]} />
+                <SimpleLineChart data={trendData} param={param} className="mt-4" />
+
             </Panel>
 
             <div className="lg:col-span-4">

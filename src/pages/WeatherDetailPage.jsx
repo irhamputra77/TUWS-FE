@@ -3,7 +3,8 @@ import { ThermometerSun, Gauge, Wind, CloudRain, Sun, Home, Info } from "lucide-
 import WeatherLayout from "../components/layouts/WeatherLayout";
 
 // aggregator lama (kompatibel)
-import { MetricCard, PARAMS, exportCSV } from "../components/weather/detail";
+import { PARAMS, exportCSV } from "../components/weather/detail";
+import { MetricCard } from "../components/molecules";
 
 // atomic
 import SegmentedTabs from "../components/molecules/SegmentedTabs";

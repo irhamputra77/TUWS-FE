@@ -1,4 +1,4 @@
-import Surface from "../atoms/Surface";
+import Surface from "../atoms/surface";
 import PARAMS from "../weather/detail/paramDefs";
 
 export default function RightSummary({ paramKey, stats }) {

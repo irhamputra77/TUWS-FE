@@ -1,7 +1,6 @@
 import HourlyStrip from "./HourlyStrip";
-import DailyStrip from "./DailyStrip";
 
-export default function ForecastCard({ view, hourly, daily, current, className }) {
+export default function ForecastCard({ view, hourly, current, className }) {
     return (
         <section
             className={`rounded-[22px] md:rounded-3xl border border-white/30 bg-white/10 backdrop-blur-xl shadow-xl px-3 py-3 md:px-0 md:py-0 ${className || ""
@@ -11,7 +10,7 @@ export default function ForecastCard({ view, hourly, daily, current, className }
                 {view === "hourly" ? (
                     <HourlyStrip current={current} items={hourly} />
                 ) : (
-                    <DailyStrip items={daily} />
+                    <HourlyStrip current={current} items={hourly} />
                 )}
             </section>
         </section>
