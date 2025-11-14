@@ -25,7 +25,7 @@ const ICONS = {
 
 function pickWeatherKey(status = "") {//ubah status sesuai dengan API
     const s = status.toLowerCase();
-    if (s.includes("cerah berawan") || s.includes("partly")) return "partly";
+    if (s.includes("cerah / berawan") || s.includes("partly")) return "partly";
     if (s.includes("cerah") || s.includes("sunny") || s.includes("clear")) return "sun";
     if (s.includes("gerimis") || s.includes("drizzle")) return "drizzle";
     if (s.includes("badai") || s.includes("petir") || s.includes("thunder") || s.includes("storm")) return "thunder";

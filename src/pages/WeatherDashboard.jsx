@@ -1,7 +1,7 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { Sun, Cloud, Droplets, Gauge, Home, Info } from "lucide-react";
 // src/components/weather/index.js
-import { getGeneral } from "../lib/api";
+import { getGeneral, getHourly } from "../lib/api";
 import {
     WeatherLayout,
     WeatherTemplate,
@@ -15,11 +15,17 @@ import {
 
 export default function WeatherDashboard() {
     const [now, setNow] = useState(() => new Date());
-    const [data, setData] = useState([]);
+    const [current, setCurrent] = useState([]);
+    const [hourly, setHourly] = useState([]);
 
     useEffect(() => {
-        getGeneral()
+        getGeneral((data) => setCurrent(data.data))
     }, []);
+    console.log(current);
+
+    useEffect(() => {
+        getHourly((data) => setHourly(data.hours));
+    }, [])
 
 
     useEffect(() => {
@@ -27,38 +33,6 @@ export default function WeatherDashboard() {
         return () => clearInterval(id);
     }, []);
 
-    const current = useMemo(
-        () => ({
-            place: "TELKOM UNIVERSITY, BANDUNG",
-            time: now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-            temp: 29,
-            status: "Cerah",
-            humidity: 78,
-            uv: 2,
-            pressure: 30.9,
-            windKmh: 14,
-            windDirDeg: 125,
-            dewPoint: 12,
-        }),
-        [now]
-    );
-
-    const hourly = [
-        { t: "13:00", temp: 29, icon: "CloudSun" },
-        { t: "14:00", temp: 28, icon: "CloudSun" },
-        { t: "15:00", temp: 27, icon: "CloudSun" },
-        { t: "16:00", temp: 26, icon: "Cloud" },
-        { t: "17:00", temp: 26, icon: "Cloud" },
-        { t: "18:00", temp: 24, icon: "Cloud" },
-    ];
-    const daily = [
-        { d: "Senin", date: "18/08", temp: 29, icon: "CloudSun" },
-        { d: "Selasa", date: "19/08", temp: 30, icon: "CloudSun" },
-        { d: "Rabu", date: "20/08", temp: 23, icon: "CloudLightning" },
-        { d: "Kamis", date: "21/08", temp: 28, icon: "CloudSun" },
-        { d: "Jumat", date: "22/08", temp: 24, icon: "CloudRain" },
-        { d: "Sabtu", date: "23/08", temp: 23, icon: "CloudRain" },
-    ];
 
     const [view, setView] = useState("hourly");
 
@@ -76,7 +50,7 @@ export default function WeatherDashboard() {
                     <header className="relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] w-screen mt-50 mb-50">
                         <div className="mx-auto max-w-[700px] px-4 text-center text-white select-none py-6">
                             <span className="block h-10 w-px bg-white/70 mb-4 mx-auto" />
-                            <div className="text-sm font-extrabold tracking-wide uppercase">{current.place}</div>
+                            <div className="text-sm font-extrabold tracking-wide uppercase">{current.Location}</div>
                             <div className="mt-2 text-[18px] font-bold opacity-90">{(current.time || "").replace(":", ".")}</div>
                             <div className="mt-2 flex items-end justify-center leading-none">
                                 <span className="text-[56px] font-extrabold tracking-tight">{current.temp}</span>
@@ -87,7 +61,7 @@ export default function WeatherDashboard() {
                             <div className="mt-2 text-[16px] font-extrabold opacity-90">
                                 {new Date().toLocaleDateString("id-ID", { day: "2-digit", month: "2-digit" })}
                             </div>
-                            <div className="mt-1 text-[20px] font-extrabold">{current.status}</div>
+                            <div className="mt-1 text-[20px] font-extrabold">{current.weather}</div>
                         </div>
                     </header>
 
@@ -98,26 +72,26 @@ export default function WeatherDashboard() {
                                     <span className="flex items-center gap-2 font-semibold">
                                         <Cloud className="h-4 w-4 opacity-70" /> Titik Embun
                                     </span>
-                                    <span className="font-extrabold tabular-nums">{current.dewPoint}°C</span>
+                                    <span className="font-extrabold tabular-nums">{current.titikembun}°C</span>
                                 </li>
                                 <li className="flex items-start justify-between gap-3">
                                     <span className="flex items-center gap-2 font-semibold">
                                         <Droplets className="h-4 w-4 opacity-70" /> Kelembapan
                                     </span>
-                                    <span className="font-extrabold tabular-nums">{current.humidity}%</span>
+                                    <span className="font-extrabold tabular-nums">{current.dew_point}%</span>
                                 </li>
                                 <li className="flex items-start justify-between gap-3">
                                     <span className="flex items-center gap-2 font-semibold">
                                         <Sun className="h-4 w-4 opacity-70" /> UV index
                                     </span>
-                                    <span className="font-extrabold tabular-nums">{current.uv} of 10</span>
+                                    <span className="font-extrabold tabular-nums">{current.UV} of 10</span>
                                 </li>
                                 <li className="flex items-start justify-between gap-3">
                                     <span className="flex items-center gap-2 font-semibold">
                                         <Gauge className="h-4 w-4 opacity-70" /> Tekanan Udara
                                     </span>
                                     <span className="inline-flex items-baseline justify-end gap-1 tabular-nums text-right whitespace-nowrap shrink-0">
-                                        <span className="font-extrabold text-[13px]">{Number(current.pressure).toFixed(2)}</span>
+                                        <span className="font-extrabold text-[13px]">{Number(current.Pressure).toFixed(2)}</span>
                                         <span className="font-semibold opacity-80 text-[12px]">Pa</span>
                                     </span>
                                 </li>
@@ -128,11 +102,11 @@ export default function WeatherDashboard() {
                             <div className="flex items-center justify-between mb-1">
                                 <span className="flex items-center gap-1 text-[14px] font-semibold">Angin</span>
                                 <span className="text-[12px] opacity-90 whitespace-nowrap">
-                                    {current.windKmh} <span className="ml-0.5">km/j</span>
+                                    {current.wind_speed} <span className="ml-0.5">km/j</span>
                                 </span>
                             </div>
-                            <div className="mt-1 flex justify-center"><Compass deg={current.windDirDeg} /></div>
-                            <div className="mt-1 text-center text-[16px] font-extrabold">{degToArah(current.windDirDeg)}</div>
+                            <div className="mt-1 flex justify-center"><Compass deg={current.deg} /></div>
+                            <div className="mt-1 text-center text-[16px] font-extrabold">{degToArah(current.deg)}</div>
                         </div>
                     </section>
 
@@ -144,23 +118,23 @@ export default function WeatherDashboard() {
             <div className="hidden md:grid md:grid-cols-12 gap-5 auto-rows-fr">
                 <WeatherTemplate
                     header={{
-                        place: current.place,
+                        place: current.Location,
                         time: now.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit", hour12: false }),
                     }}
-                    hero={{ temp: current.temp, status: current.status }}
+                    hero={{ temp: current.temp, status: current.weather }}
                     stats={{
                         humidity: current.humidity,
-                        dewPoint: current.dewPoint,
-                        pressure: current.pressure,
-                        uv: current.uv,
+                        dewPoint: current.dew_point,
+                        pressure: current.Pressure,
+                        uv: current.UV,
                     }}
                 />
-                <WindCompassPanel speed={current.windKmh} deg={current.windDirDeg} />
+                <WindCompassPanel speed={current.wind_speed} deg={current.deg} />
             </div>
 
             {/* Forecast */}
             <ForecastSwitcher value={view} onChange={setView} />
-            <ForecastList view={view} hourly={hourly} daily={daily} current={current} />
+            <ForecastList view={view} hourly={hourly} current={current} />
         </WeatherLayout>
     );
 }
