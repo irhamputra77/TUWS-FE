@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export const api = axios.create({
-    baseURL: "https://api-tuws.stas-rg.com",
+    baseURL: "http://dev-api-tuws.stas-rg.com",
     timeout: 10000,
 });
 
@@ -29,7 +29,6 @@ export const getGeneral = (callback) =>
 export const getHourly = (callback) => api.get("/api/data", {
     params: {
         type: "hourly",
-        limit: 12
     }
 }).then(
     (res) => {

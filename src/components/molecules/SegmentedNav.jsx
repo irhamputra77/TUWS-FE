@@ -22,7 +22,7 @@ export default function SegmentedNav({
                 className="absolute inset-y-1 left-1 rounded-full bg-white shadow transition-transform duration-300 ease-out will-change-transform"
                 style={{
                     width: `calc(${widthPct}% - 0.5rem)`,
-                    transform: `translateX(${active * 100}%)`,
+                    transform: `translateX(${active * 108}%)`,
                 }}
                 aria-hidden="true"
             />
