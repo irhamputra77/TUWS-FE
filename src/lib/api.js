@@ -29,6 +29,7 @@ export const getGeneral = (callback) =>
 export const getHourly = (callback) => api.get("/api/data", {
     params: {
         type: "hourly",
+        limit: 12,
     }
 }).then(
     (res) => {
@@ -39,11 +40,10 @@ export const getHourly = (callback) => api.get("/api/data", {
 
 export const getDetails = (callback) => api.get("api/data", {
     params: {
-        type: "details",
-        id: 5
+        type: "details"
     }
 }).then((res) => {
-    callback(res.data.data.weather_ecowitt);
+    callback(res.data.data);
 }).catch((err) => {
     console.log(err);
 });
@@ -52,6 +52,18 @@ export const getHistory = (callback, page = 1) => api.get("api/history", {
     params: {
         data_source: "ecowitt",
         page,
+    }
+})
+    .then((res) => {
+        callback(res.data)
+    }).catch((err) => {
+        console.log(err);
+    });
+
+export const getGraph = (callback, typeData) => api.get("api/graph", {
+    params: {
+        range: "weekly",
+        datatype: typeData,
     }
 })
     .then((res) => {

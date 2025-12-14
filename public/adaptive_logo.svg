@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="Tel-U Weather mark (adaptive)">
+  <style>
+    /* Default (light headers): dark stroke */
+    :root { --telu-stroke: #0F172A; }
+    /* Dark mode override */
+    @media (prefers-color-scheme: dark) {
+      :root { --telu-stroke: #FFFFFF; }
+    }
+    /* Allow external override via CSS variable on parent (color-scheme-aware) */
+    svg { color: var(--telu-stroke); }
+    .stroke { stroke: currentColor; }
+  </style>
+
+  <!-- Cloud + wind swash use adaptive stroke via currentColor -->
+  <g class="stroke" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="10">
+    <path d="M92 160c-16 0-28-12-28-26s12-26 28-26c4 0 8 .6 11.5 2 6-15 20-26 37.5-26 22 0 40 17 40 38 12 2 22 12 22 24 0 14-12 24-26 24H92z"/>
+    <path d="M64 184h56a20 20 0 0 0 0-40"/>
+  </g>
+
+  <!-- Accents stay green for brand consistency -->
+  <circle cx="180" cy="84" r="14" fill="#0AB600"/>
+  <path d="M150 168c0-16 18-30 18-30s18 14 18 30-8 26-18 26-18-10-18-26z" fill="#0AB600"/>
+</svg>

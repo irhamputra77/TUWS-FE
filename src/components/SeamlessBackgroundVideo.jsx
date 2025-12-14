@@ -1,42 +1,57 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useMemo } from "react";
 
-// mini helper
 const cx = (...c) => c.filter(Boolean).join(" ");
 
+const normalizeSrc = (s) => {
+    if (!s) return "";
+    return s.startsWith("/public/") ? s.replace("/public", "") : s;
+};
+
 export default function SSeamlessBackgroundVideo({
-    src,
+    // src = video default (cerah)
+    src = "/clear_VL.mp4",
+
+    // kondisi cuaca
+    weather,          // contoh: "clear" | "rain"
+    isRaining,        // optional boolean
+
     className,
-    crossfade = 0.8,     // detik: lama fade overlay
-    startAt = 0,         // mulai dari detik ke-
+    crossfade = 0.8,
+    startAt = 0,
     playbackRate = 1,
     poster,
     overlayClassName,
-    overlay = "from-black/20 via-black/10 to-black/20", // gradient default
+    overlay = "from-black/20 via-black/10 to-black/20",
 }) {
     const v = useRef(null);
-    const [fade, setFade] = useState(0); // 0..1
+    const [fade, setFade] = useState(0);
+
+    // HUJAN => rain_VL.mp4, selain itu => src (cerah)
+    const resolvedSrc = useMemo(() => {
+        const w = String(weather || "").toLowerCase();
+        const raining = isRaining === true || w === "rain";
+        return normalizeSrc(raining ? "/rain_VL.mp4" : src);
+    }, [src, weather, isRaining]);
 
     useEffect(() => {
         const el = v.current;
         if (!el) return;
-
 
         const play = () => {
             try {
                 el.playbackRate = playbackRate || 1;
                 const p = el.play();
                 if (p?.catch) p.catch(() => { });
-            } catch { console.log("video not found!!") }
+            } catch { err }
         };
 
         const prime = () => {
-            try { el.currentTime = startAt || 0; } catch { console.log("cannot start") }
+            try { el.currentTime = startAt || 0; } catch { err }
             play();
         };
 
         const onLoaded = () => prime();
 
-        // pakai timeupdate untuk trigger fade saat mendekati akhir
         let ticking = false;
         const onTime = () => {
             if (ticking) return;
@@ -45,23 +60,29 @@ export default function SSeamlessBackgroundVideo({
                 ticking = false;
                 const dur = el.duration || 0;
                 if (!(dur > 0)) return;
+
                 const remain = dur - el.currentTime;
+                if (remain <= crossfade) setFade(1);
 
-                if (remain <= crossfade) setFade(1);     // fade out menjelang akhir
-
-                if (el.currentTime >= dur) {             // “loop” manual
-                    prime();                               // lompat ke awal
-                    setTimeout(() => setFade(0), 40);      // fade in lagi
+                if (el.currentTime >= dur) {
+                    prime();
+                    setTimeout(() => setFade(0), 40);
                 }
             });
         };
 
         el.addEventListener("loadedmetadata", onLoaded, { once: true });
         el.addEventListener("timeupdate", onTime);
-        if (!isNaN(el.duration) && el.duration > 0) onLoaded();
 
-        return () => { el.removeEventListener("timeupdate", onTime); };
-    }, [src, crossfade, startAt, playbackRate]);
+        // kalau ganti source, load() akan nembak loadedmetadata lagi
+        el.load();
+
+        return () => el.removeEventListener("timeupdate", onTime);
+    }, [resolvedSrc, crossfade, startAt, playbackRate]);
+
+    useEffect(() => {
+        setFade(0);
+    }, [resolvedSrc]);
 
     const fadeMs = Math.max(50, crossfade * 1000);
 
@@ -73,13 +94,12 @@ export default function SSeamlessBackgroundVideo({
                 muted
                 playsInline
                 preload="auto"
-                loop={false}        // loop manual agar bisa fade
+                loop={false}
                 poster={poster}
             >
-                <source src={src?.startsWith("/public/") ? src.replace("/public", "") : src} type="video/mp4" />
+                <source src={resolvedSrc} type="video/mp4" />
             </video>
 
-            {/* overlay untuk menyamarkan lompatan loop */}
             <div
                 className={cx(
                     "pointer-events-none absolute inset-0 bg-gradient-to-b",

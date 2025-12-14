@@ -12,8 +12,8 @@ export default function WeatherTemplate({ header, hero, stats, children }) {
         <div className="mt-10 grid grid-cols-2 xl:grid-cols-4 gap-4">
           <KpiCard title="Kelembapan" value={`${stats.humidity}%`} icon={<Droplets className="h-5 w-5" />} />
           <KpiCard title="Titik Embun" value={`${stats.dewPoint}°C`} icon={<Cloud className="h-5 w-5" />} />
-          <KpiCard title="Tenakan Udara" value={Number(stats.Pressure).toFixed(2)} unit="Pa" icon={<Gauge className="h-5 w-5" />} />
-          <KpiCard title="Curah Hujan" value={stats.rain_rate} unit="of 10" icon={<CloudRain className="h-5 w-5" />} />
+          <KpiCard title="Tenakan Udara" value={Number(stats.pressure).toFixed(2)} unit="Pa" icon={<Gauge className="h-5 w-5" />} />
+          <KpiCard title="Curah Hujan" value={stats.rain_rate} unit="mm" icon={<CloudRain className="h-5 w-5" />} />
         </div>
       </section>
       {children}

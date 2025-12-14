@@ -48,7 +48,8 @@ export default function WeatherDashboard() {
                         <div className="mx-auto max-w-[700px] px-4 text-center text-white select-none py-6">
                             <span className="block h-10 w-px bg-white/70 mb-4 mx-auto" />
                             <div className="text-sm font-extrabold tracking-wide uppercase">
-                                {current.Location}
+                                TELKOM UNIVERISTY, BANDUNG
+                                {/* {current.Location} */}
                             </div>
                             <div className="mt-2 text-[18px] font-bold opacity-90">
                                 {(current.time || "").replace(":", ".")}
@@ -151,7 +152,7 @@ export default function WeatherDashboard() {
             <div className="hidden md:grid md:grid-cols-12 gap-5 auto-rows-fr">
                 <WeatherTemplate
                     header={{
-                        place: current.Location,
+                        place: "TELKOM UNIVERSITY. BANDUNG",
                         time: now.toLocaleTimeString("id-ID", {
                             hour: "2-digit",
                             minute: "2-digit",
@@ -162,8 +163,8 @@ export default function WeatherDashboard() {
                     stats={{
                         humidity: current.humidity,
                         dewPoint: current.dew_point,
-                        pressure: current.Pressure,
-                        uv: current.UV,
+                        pressure: current.pressure,
+                        rain_rate: current.rain_rate,
                     }}
                 />
                 <WindCompassPanel speed={current.wind_speed} deg={current.deg} />

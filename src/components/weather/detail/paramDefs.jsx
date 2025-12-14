@@ -9,7 +9,7 @@ const num = (v) => {
 // Daftar parameter untuk picker, ringkasan, dan perhitungan statistik
 export const PARAMS = [
     {
-        key: "temp",
+        key: "temperature",
         label: "Suhu",
         unit: "°C",
         icon: ThermometerSun,

@@ -73,11 +73,11 @@ export default function HistoryPanel({
                         )}
 
                         {rowsShown.map((r, i) => {
-                            const ec = r.weather_ecowitt ?? {};
+                            const ec = r ?? {};
                             return (
                                 <tr key={r.id ?? i} className="odd:bg-white/40 even:bg-white/25">
                                     <td className="px-4 py-2">
-                                        {fmtTime(ec.request_time ?? r.created_at)}
+                                        {fmtTime(ec.time ?? r.created_at)}
                                     </td>
 
                                     <td className="px-4 py-2 tabular-nums">
@@ -89,21 +89,21 @@ export default function HistoryPanel({
 
                                     <td className="px-4 py-2 tabular-nums">
                                         {(() => {
-                                            const v = num(ec.temperature_feels_like_outdoor);
+                                            const v = num(ec.feels_like);
                                             return v != null ? v.toFixed(2) : "-";
                                         })()}
                                     </td>
 
                                     <td className="px-4 py-2 tabular-nums">
-                                        {ec.uvi ?? "-"}
+                                        {ec.UVI ?? "-"}
                                     </td>
 
                                     <td className="px-4 py-2 tabular-nums">
-                                        {ec.humidity_outdoor ?? "-"}
+                                        {ec.humidity ?? "-"}
                                     </td>
 
                                     <td className="px-4 py-2 tabular-nums">
-                                        {ec.pressure_absolute ?? "-"}
+                                        {ec.pressure ?? "-"}
                                     </td>
 
                                     <td className="px-4 py-2 tabular-nums">
@@ -123,7 +123,7 @@ export default function HistoryPanel({
                                     </td>
 
                                     <td className="px-4 py-2 tabular-nums">
-                                        {ec.rain_hour ?? "-"}
+                                        {ec.rain_rate ?? "-"}
                                     </td>
 
                                     <td className="px-4 py-2 tabular-nums">
@@ -131,7 +131,7 @@ export default function HistoryPanel({
                                     </td>
 
                                     <td className="px-4 py-2">
-                                        {degToArah(ec.wind_direction)}
+                                        {degToArah(ec.degree)}
                                     </td>
                                 </tr>
                             );

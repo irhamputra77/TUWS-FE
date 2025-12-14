@@ -1,6 +1,8 @@
 // components/layouts/WeatherLayout.jsx
+import { useEffect, useState } from "react";
 import SeamlessBackgroundVideo from "../SeamlessBackgroundVideo";
 import SegmentedNav from "../molecules/SegmentedNav";
+import { getGeneral } from "../../lib/api";
 
 export default function WeatherLayout({
     children,
@@ -9,13 +11,16 @@ export default function WeatherLayout({
     mainClassName = "",         // override/extend container (width, padding)
     overlay = true,
 }) {
+    const [current, setCurrent] = useState([]);
+
+    useEffect(() => {
+        getGeneral((data) => setCurrent(data.data))
+    })
     return (
         <div className="relative min-h-screen w-full overflow-hidden">
             <SeamlessBackgroundVideo
-                src="/ssvid.net--Deep-Blue-Sky-Clouds-Timelapse-Free-Footage_1080p.mp4"
-                crossfade={0.9}     // 0.7–1.2 biasanya enak
-                startAt={0}
-                playbackRate={1}
+                src="/clear_VL.mp4"     // video cerah
+                weather={current.weather} // "clear" atau "rain"
             />
             {overlay && (
                 <div className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-b from-black/10 via-black/0 to-black/10" />

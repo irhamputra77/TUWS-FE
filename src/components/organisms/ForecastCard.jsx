@@ -60,18 +60,18 @@ export default function ForecastCard({
         return "default";
     }
     // helper: format ISO -> "HH:mm"
-    const toHHmm = (s) => {
-        if (!s) return "—";
-        const d = new Date(s);
-        if (!isNaN(d)) {
-            const hh = String(d.getHours()).padStart(2, "0");
-            const mm = String(d.getMinutes()).padStart(2, "0");
-            return `${hh}:${mm}`;
-        }
-        // fallback kalau bukan Date valid tapi pola ISO masih ada
-        const m = String(s).match(/T(\d{2}):(\d{2})/);
-        return m ? `${m[1]}:${m[2]}` : "—";
-    };
+    // const toHHmm = (s) => {
+    //     if (!s) return "—";
+    //     const d = new Date(s);
+    //     if (!isNaN(d)) {
+    //         const hh = String(d.getHours()).padStart(2, "0");
+    //         const mm = String(d.getMinutes()).padStart(2, "0");
+    //         return `${hh}:${mm}`;
+    //     }
+    //     // fallback kalau bukan Date valid tapi pola ISO masih ada
+    //     const m = String(s).match(/T(\d{2}):(\d{2})/);
+    //     return m ? `${m[1]}:${m[2]}` : "—";
+    // };
 
 
     // ========== HOURLY STRIP ==========
@@ -114,7 +114,7 @@ export default function ForecastCard({
 
                     {/* Item jam berikutnya */}
                     {hourly.map((h) => {
-                        const key = pickWeatherKey(h?.weather_predic || h?.status || "");
+                        const key = pickWeatherKey(h?.weather_predict);
                         const Icon = iconMap[key] || Cloud;
                         return (
                             <div
@@ -122,7 +122,7 @@ export default function ForecastCard({
                                 className="relative shrink-0 text-center min-w-[1px] md:min-w-[178px] my-1 md:my-2 py-2 md:py-3 flex flex-col items-center justify-center"
                             >
                                 <div className="text-[12px] md:text-[20px] font-bold opacity-95 md:pb-[30px]">
-                                    {toHHmm(h?.time)}
+                                    {h?.time}
                                 </div>
 
                                 <div className="mb-2 mt-0.5 md:mt-1 text-[28px] md:text-[48px] font-extrabold leading-none md:pb-[33px]">
@@ -140,7 +140,7 @@ export default function ForecastCard({
                                                 break-words
                                             "
                                 >
-                                    {h.weather_predic ?? "—"}
+                                    {h.weather_predict ?? "—"}
                                 </div>
 
                             </div>

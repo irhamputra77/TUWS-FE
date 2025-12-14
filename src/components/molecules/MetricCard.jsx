@@ -7,8 +7,8 @@ export default function MetricCard({ icon: Icon, label, value, unit }) {
             <div className="flex items-center gap-3">
                 <IconCircle icon={Icon} />
                 <div className="leading-tight">
-                    <div className="text-[14px] opacity-90 ">{label}</div>
-                    <div className="text-[22px] font-extrabold tabular-nums">
+                    <div className="text-[15px] opacity-90 ">{label}</div>
+                    <div className="text-[15px] font-extrabold tabular-nums">
                         {value}
                         {unit ? (
                             <span className="ml-1 opacity-95 font-bold text-[14px]">{unit}</span>
