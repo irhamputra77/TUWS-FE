@@ -7,7 +7,6 @@ import { getGeneral } from "../../lib/api";
 export default function WeatherLayout({
     children,
     bottomTabs,                 // [{to,label,icon}]
-    videoProps = {},
     mainClassName = "",         // override/extend container (width, padding)
     overlay = true,
 }) {
@@ -15,7 +14,7 @@ export default function WeatherLayout({
 
     useEffect(() => {
         getGeneral((data) => setCurrent(data.data))
-    })
+    }, []);
     return (
         <div className="relative min-h-screen w-full overflow-hidden">
             <SeamlessBackgroundVideo
